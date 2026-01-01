@@ -22,6 +22,7 @@ const SLOTS = [
 const viewCanvas = document.getElementById("view");
 const downloadBtn = document.getElementById("download");
 const fileInput = document.getElementById("file");
+const maskButtons = Array.from(document.querySelectorAll("button[data-mask]"));
 
 const viewCtx = viewCanvas.getContext("2d", { alpha: true });
 viewCtx.imageSmoothingEnabled = true;
@@ -33,6 +34,8 @@ renderCtx.imageSmoothingEnabled = true;
 renderCtx.imageSmoothingQuality = "high";
 
 let maskImg;
+let currentMaskSrc = null;
+let maskLoadSeq = 0;
 let renderW = 0;
 let renderH = 0;
 let scaledSlots = [];
@@ -49,13 +52,44 @@ let dragStartOffsetY = 0;
 let dragMoved = false;
 const DRAG_START_THRESHOLD_PX = 3;
 
-function loadMask() {
+function loadMask(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = reject;
-    img.src = "mask.png";
+    img.src = src;
   });
+}
+
+function updateMaskButtonsState(isLoading = false) {
+  for (const btn of maskButtons) {
+    const src = btn.dataset.mask;
+    const isActive = !!currentMaskSrc && src === currentMaskSrc;
+    btn.disabled = isLoading || !currentMaskSrc || isActive;
+    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+  }
+}
+
+async function setMask(src) {
+  if (!src) return;
+
+  const seq = ++maskLoadSeq;
+  updateMaskButtonsState(true);
+
+  const img = await loadMask(src);
+  if (seq !== maskLoadSeq) return;
+
+  const isFirstMask = !maskImg;
+  maskImg = img;
+  currentMaskSrc = src;
+
+  updateMaskButtonsState(false);
+
+  if (isFirstMask) {
+    rerenderAll();
+  } else {
+    render();
+  }
 }
 
 function computeScaledSlots() {
@@ -157,7 +191,9 @@ function render() {
     renderCtx.restore();
   }
 
-  renderCtx.drawImage(maskImg, 0, 0, renderW, renderH);
+  if (maskImg) {
+    renderCtx.drawImage(maskImg, 0, 0, renderW, renderH);
+  }
 
   viewCtx.setTransform(1, 0, 0, 1, 0, 0);
   viewCtx.clearRect(0, 0, viewCanvas.width, viewCanvas.height);
@@ -287,8 +323,14 @@ window.addEventListener("resize", () => {
   rerenderAll();
 });
 
+for (const btn of maskButtons) {
+  btn.addEventListener("click", () => {
+    const src = btn.dataset.mask;
+    void setMask(src);
+  });
+}
+
 (async function main() {
-  maskImg = await loadMask();
   renderW = BASE_MASK_W;
   renderH = BASE_MASK_H;
 
@@ -298,7 +340,7 @@ window.addEventListener("resize", () => {
   renderCtx.imageSmoothingQuality = "high";
 
   computeScaledSlots();
-  rerenderAll();
+  await setMask("mask1.png");
 
   downloadBtn.disabled = false;
 })();

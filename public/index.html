@@ -10,6 +10,15 @@
   <body>
     <canvas id="view"></canvas>
     <div id="controls">
+      <button type="button" data-mask="mask1.png" disabled aria-pressed="true">
+        white/white
+      </button>
+      <button type="button" data-mask="mask2.png" disabled aria-pressed="false">
+        black/white
+      </button>
+      <button type="button" data-mask="mask3.png" disabled aria-pressed="false">
+        black/black
+      </button>
       <button id="download" type="button" disabled>Download</button>
     </div>
     <input id="file" type="file" accept="image/*" hidden />
