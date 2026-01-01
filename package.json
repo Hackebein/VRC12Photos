@@ -1,0 +1,8 @@
+{
+  "name": "vrc12photos",
+  "scripts": {
+    "dev": "sudo -E npx --yes live-server public --host=0.0.0.0 --port=80 --no-browser"
+  }
+}
+
+

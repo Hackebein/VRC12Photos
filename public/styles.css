@@ -1,0 +1,44 @@
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0f172a;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans,
+    sans-serif;
+}
+
+#view {
+  display: block;
+  touch-action: manipulation;
+  background: #f5f3ff;
+}
+
+#controls {
+  padding: 12px 0;
+}
+
+button {
+  font: inherit;
+  padding: 10px 14px;
+  border: 0;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+

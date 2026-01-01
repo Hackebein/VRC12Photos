@@ -1,0 +1,34 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+	"name": "Development Container",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.vscode-github-actions"
+			]
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/sshd:1": {
+			"version": "latest"
+		}
+	},
+	"postStartCommand": "npm run dev",
+	"forwardPorts": [
+		80
+	],
+	"portsAttributes": {
+		"80": {
+			"label": "http (caddy)",
+			"onAutoForward": "openBrowser"
+		}
+	},
+	"otherPortsAttributes": {
+		"onAutoForward": "silent"
+	}
+}
